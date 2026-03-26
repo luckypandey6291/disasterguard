@@ -1,0 +1,21 @@
+# Frontend dependencies
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+
+# Backend build
+target/
+*.jar
+*.war
+
+# Backend sensitive config
+src/main/resources/application-local.properties
+
+# IDE files
+.idea/
+*.iml
+*.class
+
+# OS files
+.DS_Store
+Thumbs.db

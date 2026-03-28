@@ -1,11 +1,7 @@
+import { useEffect, useState } from 'react';
 import AppLayout from '../../components/Layout/AppLayout';
 import useAuthStore from '../../store/authStore';
-
-const sosList = [
-  { id: 1, name: 'Rahul Sharma', location: 'Park Street, Kolkata', time: '2 min ago', status: 'PENDING', coords: '22.5514, 88.3527' },
-  { id: 2, name: 'Priya Singh', location: 'Salt Lake, Sector 5', time: '8 min ago', status: 'ASSIGNED', coords: '22.5726, 88.4152' },
-  { id: 3, name: 'Amit Das', location: 'Howrah Bridge area', time: '15 min ago', status: 'PENDING', coords: '22.5851, 88.3468' },
-];
+import api from '../../services/api';
 
 const statusStyle = {
   PENDING: { bg: '#FCEBEB', color: '#A32D2D', label: 'Pending' },
@@ -15,6 +11,44 @@ const statusStyle = {
 
 export default function ResponderDashboard() {
   const { user } = useAuthStore();
+  const [sosList, setSosList] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchSos() {
+      try {
+        const response = await api.get('/sos/pending');
+        setSosList(response.data);
+      } catch (err) {
+        console.error('Failed to fetch SOS alerts', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchSos();
+  }, []);
+
+  async function handleAssign(sosId) {
+    try {
+      await api.put(`/sos/${sosId}/assign`);
+      setSosList((prev) =>
+        prev.map((s) => s.id === sosId ? { ...s, status: 'ASSIGNED' } : s)
+      );
+    } catch (err) {
+      console.error('Failed to assign SOS', err);
+    }
+  }
+
+  async function handleResolve(sosId) {
+    try {
+      await api.put(`/sos/${sosId}/resolve`);
+      setSosList((prev) =>
+        prev.map((s) => s.id === sosId ? { ...s, status: 'RESOLVED' } : s)
+      );
+    } catch (err) {
+      console.error('Failed to resolve SOS', err);
+    }
+  }
 
   return (
     <AppLayout>
@@ -33,10 +67,10 @@ export default function ResponderDashboard() {
       {/* Stats */}
       <div style={styles.statsGrid}>
         {[
-          { label: 'Pending SOS', value: '3', color: '#E24B4A' },
-          { label: 'Assigned to me', value: '1', color: '#EF9F27' },
-          { label: 'Resolved today', value: '8', color: '#639922' },
-          { label: 'Avg response time', value: '4m', color: '#378ADD' },
+          { label: 'Pending SOS', value: sosList.filter(s => s.status === 'PENDING').length, color: '#E24B4A' },
+          { label: 'Assigned', value: sosList.filter(s => s.status === 'ASSIGNED').length, color: '#EF9F27' },
+          { label: 'Resolved', value: sosList.filter(s => s.status === 'RESOLVED').length, color: '#639922' },
+          { label: 'Total today', value: sosList.length, color: '#378ADD' },
         ].map((s) => (
           <div key={s.label} style={styles.statCard}>
             <div style={styles.statLabel}>{s.label}</div>
@@ -50,35 +84,80 @@ export default function ResponderDashboard() {
         <div style={styles.section}>
           <div style={styles.sectionHeader}>
             <h2 style={styles.sectionTitle}>Incoming SOS alerts</h2>
-            <span style={styles.badge}>{sosList.length} active</span>
+            <span style={styles.badge}>
+              {sosList.filter(s => s.status === 'PENDING').length} pending
+            </span>
           </div>
 
           <div style={styles.sosList}>
-            {sosList.map((sos) => {
-              const st = statusStyle[sos.status];
+            {/* Loading state */}
+            {loading && (
+              <div style={styles.emptyText}>Loading SOS alerts...</div>
+            )}
+
+            {/* Empty state */}
+            {!loading && sosList.length === 0 && (
+              <div style={styles.emptyText}>No SOS alerts right now</div>
+            )}
+
+            {/* SOS list */}
+            {!loading && sosList.map((sos) => {
+              const st = statusStyle[sos.status] || statusStyle.PENDING;
               return (
                 <div key={sos.id} style={styles.sosItem}>
                   <div style={styles.sosTop}>
-                    <div style={styles.sosName}>{sos.name}</div>
-                    <span style={{ ...styles.statusBadge, background: st.bg, color: st.color }}>
+                    <div style={styles.sosName}>
+                      {sos.user?.name || 'Unknown User'}
+                    </div>
+                    <span style={{ ...styles.statusBadge,
+                      background: st.bg, color: st.color }}>
                       {st.label}
                     </span>
                   </div>
-                  <div style={styles.sosLocation}>📍 {sos.location}</div>
-                  <div style={styles.sosMeta}>
-                    <span style={styles.sosCoords}>{sos.coords}</span>
-                    <span style={styles.sosTime}>{sos.time}</span>
+
+                  <div style={styles.sosLocation}>
+                    📍 {sos.locationName ||
+                      `${sos.latitude?.toFixed(4)}, ${sos.longitude?.toFixed(4)}`}
                   </div>
+
+                  <div style={styles.sosMeta}>
+                    <span style={styles.sosCoords}>
+                      {sos.latitude?.toFixed(6)}, {sos.longitude?.toFixed(6)}
+                    </span>
+                    <span style={styles.sosTime}>
+                      {new Date(sos.triggeredAt).toLocaleTimeString()}
+                    </span>
+                  </div>
+
+                  <div style={styles.sosType}>
+                    Type: {sos.emergencyType || 'GENERAL'}
+                  </div>
+
                   {sos.status === 'PENDING' && (
                     <div style={styles.sosActions}>
-                      <button style={styles.acceptBtn}>Accept & Respond</button>
-                      <button style={styles.mapBtn}>View on map</button>
+                      <button
+                        style={styles.acceptBtn}
+                        onClick={() => handleAssign(sos.id)}
+                      >
+                        Accept & Respond
+                      </button>
                     </div>
                   )}
+
                   {sos.status === 'ASSIGNED' && (
                     <div style={styles.sosActions}>
-                      <button style={styles.resolveBtn}>Mark Resolved</button>
-                      <button style={styles.mapBtn}>View on map</button>
+                      <button
+                        style={styles.resolveBtn}
+                        onClick={() => handleResolve(sos.id)}
+                      >
+                        Mark Resolved
+                      </button>
+                    </div>
+                  )}
+
+                  {sos.status === 'RESOLVED' && (
+                    <div style={styles.resolvedTag}>
+                      Resolved
                     </div>
                   )}
                 </div>
@@ -103,9 +182,9 @@ export default function ResponderDashboard() {
           <div style={styles.card}>
             <div style={styles.cardLabel}>Today's summary</div>
             {[
-              { label: 'SOS handled', value: '8' },
-              { label: 'Avg response', value: '4 min' },
-              { label: 'Distance covered', value: '23 km' },
+              { label: 'SOS handled', value: sosList.filter(s => s.status === 'RESOLVED').length },
+              { label: 'Pending', value: sosList.filter(s => s.status === 'PENDING').length },
+              { label: 'Assigned', value: sosList.filter(s => s.status === 'ASSIGNED').length },
             ].map((item) => (
               <div key={item.label} style={styles.summaryRow}>
                 <span style={styles.summaryLabel}>{item.label}</span>
@@ -152,26 +231,30 @@ const styles = {
   badge: { background: '#FCEBEB', color: '#A32D2D', fontSize: '12px',
     padding: '2px 8px', borderRadius: '20px' },
   sosList: { display: 'flex', flexDirection: 'column', gap: '12px' },
+  emptyText: { fontSize: '13px', color: '#888780',
+    textAlign: 'center', padding: '32px 0' },
   sosItem: { border: '0.5px solid #e0dfd7', borderRadius: '10px', padding: '14px' },
   sosTop: { display: 'flex', justifyContent: 'space-between',
     alignItems: 'center', marginBottom: '6px' },
   sosName: { fontSize: '14px', fontWeight: '500', color: '#1a1a18' },
   statusBadge: { fontSize: '11px', padding: '3px 8px',
     borderRadius: '20px', fontWeight: '500' },
-  sosLocation: { fontSize: '13px', color: '#5F5E5A', marginBottom: '6px' },
-  sosMeta: { display: 'flex', justifyContent: 'space-between', marginBottom: '10px' },
+  sosLocation: { fontSize: '13px', color: '#5F5E5A', marginBottom: '4px' },
+  sosMeta: { display: 'flex', justifyContent: 'space-between', marginBottom: '6px' },
   sosCoords: { fontSize: '11px', color: '#B4B2A9', fontFamily: 'monospace' },
   sosTime: { fontSize: '11px', color: '#B4B2A9' },
-  sosActions: { display: 'flex', gap: '8px' },
+  sosType: { fontSize: '11px', color: '#888780',
+    marginBottom: '10px', fontStyle: 'italic' },
+  sosActions: { display: 'flex', gap: '8px', marginTop: '8px' },
   acceptBtn: { flex: 1, padding: '8px', background: '#E24B4A', color: '#fff',
     border: 'none', borderRadius: '6px', fontSize: '12px',
     fontWeight: '500', cursor: 'pointer' },
   resolveBtn: { flex: 1, padding: '8px', background: '#639922', color: '#fff',
     border: 'none', borderRadius: '6px', fontSize: '12px',
     fontWeight: '500', cursor: 'pointer' },
-  mapBtn: { padding: '8px 12px', background: 'transparent',
-    border: '0.5px solid #e0dfd7', borderRadius: '6px',
-    fontSize: '12px', color: '#888780', cursor: 'pointer' },
+  resolvedTag: { fontSize: '12px', color: '#27500A',
+    background: '#EAF3DE', padding: '4px 10px',
+    borderRadius: '6px', display: 'inline-block', marginTop: '8px' },
   rightPanel: { display: 'flex', flexDirection: 'column', gap: '14px' },
   card: { background: '#ffffff', borderRadius: '12px',
     border: '0.5px solid #e0dfd7', padding: '16px' },

@@ -34,47 +34,48 @@ export default function SOSPage() {
   }
 
   async function handleSOS() {
-    setStatus(STATUS.LOCATING);
-    setErrorMsg('');
+  setStatus(STATUS.LOCATING);
+  setErrorMsg('');
 
-    // Step 1 — Get GPS location
-    if (!navigator.geolocation) {
-      setErrorMsg('Geolocation is not supported by your browser');
-      setStatus(STATUS.ERROR);
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        const coords = {
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-        };
-        setLocation(coords);
-        setStatus(STATUS.SENDING);
-
-        // Step 2 — Send to backend (will connect later)
-        try {
-          // await api.post('/sos', coords);  // uncomment when backend ready
-          await new Promise((r) => setTimeout(r, 1000)); // simulate API call
-          setStatus(STATUS.SENT);
-          setSeconds(0);
-        } catch (err) {
-          setErrorMsg('Failed to send SOS. Please try again.');
-          setStatus(STATUS.ERROR);
-        }
-      },
-      (err) => {
-        setErrorMsg(
-          err.code === 1
-            ? 'Location permission denied. Please allow location access.'
-            : 'Could not get your location. Please try again.'
-        );
-        setStatus(STATUS.ERROR);
-      },
-      { enableHighAccuracy: true, timeout: 10000 }
-    );
+  if (!navigator.geolocation) {
+    setErrorMsg('Geolocation is not supported by your browser');
+    setStatus(STATUS.ERROR);
+    return;
   }
+
+  navigator.geolocation.getCurrentPosition(
+    async (position) => {
+      const coords = {
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+        emergencyType: 'GENERAL',
+      };
+      setLocation({
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+      });
+      setStatus(STATUS.SENDING);
+
+      try {
+        await api.post('/sos/trigger', coords);
+        setStatus(STATUS.SENT);
+        setSeconds(0);
+      } catch (err) {
+        setErrorMsg('Failed to send SOS. Please try again.');
+        setStatus(STATUS.ERROR);
+      }
+    },
+    (err) => {
+      setErrorMsg(
+        err.code === 1
+          ? 'Location permission denied. Please allow location access.'
+          : 'Could not get your location. Please try again.'
+      );
+      setStatus(STATUS.ERROR);
+    },
+    { enableHighAccuracy: true, timeout: 10000 }
+  );
+}
 
   function handleCancel() {
     setStatus(STATUS.IDLE);

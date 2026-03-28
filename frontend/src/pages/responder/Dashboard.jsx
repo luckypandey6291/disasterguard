@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import AppLayout from '../../components/Layout/AppLayout';
 import useAuthStore from '../../store/authStore';
 import api from '../../services/api';
+import useWebSocket from '../../hooks/useWebSocket';
 
 const statusStyle = {
   PENDING: { bg: '#FCEBEB', color: '#A32D2D', label: 'Pending' },
@@ -27,6 +28,18 @@ export default function ResponderDashboard() {
     }
     fetchSos();
   }, []);
+
+  // Naya SOS real-time mein aane pe list mein add karo
+useWebSocket(
+  (newSos) => {
+    setSosList((prev) => [newSos, ...prev]);
+  },
+  (updatedSos) => {
+    setSosList((prev) =>
+      prev.map((s) => s.id === updatedSos.id ? updatedSos : s)
+    );
+  }
+);
 
   async function handleAssign(sosId) {
     try {

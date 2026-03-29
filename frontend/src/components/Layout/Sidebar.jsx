@@ -9,8 +9,7 @@ const navItems = {
     { path: '/donate', label: 'Donate' },
   ],
   RESPONDER: [
-    { path: '/responder', label: 'Dashboard' },
-    { path: '/responder/map', label: 'Live Map' },
+    { path: '/responder', label: 'Dashboard' },  // Live Map ab dashboard pe hi hai
     { path: '/responder/dispatch', label: 'Dispatch' },
   ],
   ADMIN: [

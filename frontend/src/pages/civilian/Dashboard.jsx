@@ -3,6 +3,7 @@ import AppLayout from '../../components/Layout/AppLayout';
 import useAuthStore from '../../store/authStore';
 import api from '../../services/api';
 import useWebSocket from '../../hooks/useWebSocket';
+import DisasterMap from '../../components/Map/DisasterMap';
 
 const severityColors = {
   CRITICAL: { dot: '#E24B4A', bg: '#FCEBEB', color: '#A32D2D' },
@@ -29,6 +30,26 @@ export default function CivilianDashboard() {
     }
     fetchIncidents();
   }, []);
+
+  const [sosAlerts, setSosAlerts] = useState([]);
+
+useEffect(() => {
+  async function fetchData() {
+    try {
+      const [incidentRes, sosRes] = await Promise.all([
+        api.get('/incidents/active'),
+        api.get('/sos/pending'),
+      ]);
+      setIncidents(incidentRes.data);
+      setSosAlerts(sosRes.data);
+    } catch (err) {
+      console.error('Failed to fetch data', err);
+    } finally {
+      setLoading(false);
+    }
+  }
+  fetchData();
+}, []);
 
   // Real-time new incidents
   useWebSocket(
@@ -68,6 +89,17 @@ export default function CivilianDashboard() {
           </div>
         ))}
       </div>
+
+      {/* Live Map */}
+<div style={styles.mapSection}>
+  <div style={styles.sectionHeader}>
+    <h2 style={styles.sectionTitle}>Live disaster map</h2>
+    <span style={{ fontSize: '12px', color: '#888780' }}>
+      {incidents.length} incidents plotted
+    </span>
+  </div>
+  <DisasterMap incidents={incidents} height="320px" />
+</div>
 
       <div style={styles.contentRow}>
         <div style={styles.section}>
@@ -222,4 +254,11 @@ const styles = {
     fontSize: '12px', color: '#5F5E5A', marginBottom: '8px', lineHeight: '1.5' },
   tipDot: { width: '5px', height: '5px', borderRadius: '50%',
     background: '#B4B2A9', marginTop: '5px', flexShrink: 0 },
+    mapSection: {
+  background: '#ffffff',
+  borderRadius: '12px',
+  border: '0.5px solid #e0dfd7',
+  padding: '20px',
+  marginBottom: '20px',
+},
 };

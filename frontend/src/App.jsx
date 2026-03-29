@@ -9,6 +9,7 @@ import CivilianDashboard from './pages/civilian/Dashboard';
 import SOSPage from './pages/civilian/SOSPage';
 import ResponderDashboard from './pages/responder/Dashboard';
 import AdminDashboard from './pages/admin/Dashboard';
+import Donate from './pages/civilian/Donate';
 
 function ProtectedRoute({ children, allowedRoles }) {
   const { user, token } = useAuthStore();
@@ -41,6 +42,13 @@ export default function App() {
             <ResponderDashboard />
           </ProtectedRoute>
         } />
+
+        <Route path="/donate" element={
+          <ProtectedRoute allowedRoles={['CIVILIAN', 'NGO']}>
+           <Donate />
+        </ProtectedRoute>
+        } />
+        
         <Route path="/admin" element={
           <ProtectedRoute allowedRoles={['ADMIN']}>
             <AdminDashboard />

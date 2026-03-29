@@ -1,28 +1,30 @@
 import { useEffect, useRef } from 'react';
 import { Client } from '@stomp/stompjs';
-import SockJS from 'sockjs-client';
 
-export default function useWebSocket(onSosReceived, onSosUpdated) {
+export default function useWebSocket(onSosReceived, onSosUpdated, onIncidentReceived) {
   const clientRef = useRef(null);
 
   useEffect(() => {
     const client = new Client({
-      webSocketFactory: () => new SockJS('http://localhost:8080/ws'),
+      brokerURL: 'ws://localhost:8080/ws/websocket',
       reconnectDelay: 5000,
 
       onConnect: () => {
         console.log('WebSocket connected!');
 
-        // Naya SOS aane pe
         client.subscribe('/topic/sos', (message) => {
           const sos = JSON.parse(message.body);
           if (onSosReceived) onSosReceived(sos);
         });
 
-        // SOS update hone pe (assign/resolve)
         client.subscribe('/topic/sos-update', (message) => {
           const sos = JSON.parse(message.body);
           if (onSosUpdated) onSosUpdated(sos);
+        });
+
+        client.subscribe('/topic/incidents', (message) => {
+          const incident = JSON.parse(message.body);
+          if (onIncidentReceived) onIncidentReceived(incident);
         });
       },
 

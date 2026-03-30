@@ -5,8 +5,11 @@ export default function useWebSocket(onSosReceived, onSosUpdated, onIncidentRece
   const clientRef = useRef(null);
 
   useEffect(() => {
+    const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
+    const wsUrl = apiUrl.replace('https://', 'wss://').replace('http://', 'ws://');
+
     const client = new Client({
-      brokerURL: 'ws://localhost:8080/ws/websocket',
+      brokerURL: `${wsUrl}/ws/websocket`,
       reconnectDelay: 5000,
 
       onConnect: () => {
@@ -36,8 +39,6 @@ export default function useWebSocket(onSosReceived, onSosUpdated, onIncidentRece
     client.activate();
     clientRef.current = client;
 
-    return () => {
-      client.deactivate();
-    };
+    return () => client.deactivate();
   }, []);
 }

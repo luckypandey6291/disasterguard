@@ -19,3 +19,4 @@ src/main/resources/application-local.properties
 # OS files
 .DS_Store
 Thumbs.db
+.vercel

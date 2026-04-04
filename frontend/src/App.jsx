@@ -1,6 +1,9 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import useAuthStore from './store/authStore';
 
+import DisasterInfo from './pages/civilian/DisasterInfo';
+import Dispatch from './pages/responder/Dispatch';
+
 import Login from './pages/shared/Login';
 import Register from './pages/shared/Register';
 import NotFound from './pages/shared/NotFound';
@@ -40,6 +43,18 @@ export default function App() {
         <Route path="/responder" element={
           <ProtectedRoute allowedRoles={['RESPONDER']}>
             <ResponderDashboard />
+          </ProtectedRoute>
+        } />
+
+        <Route path="/disaster-info" element={
+          <ProtectedRoute allowedRoles={['CIVILIAN', 'NGO']}>
+             <DisasterInfo />
+         </ProtectedRoute>
+        } />
+
+        <Route path="/responder/dispatch" element={
+          <ProtectedRoute allowedRoles={['RESPONDER']}>
+            <Dispatch />
           </ProtectedRoute>
         } />
 

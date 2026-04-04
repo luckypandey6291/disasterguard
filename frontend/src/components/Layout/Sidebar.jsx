@@ -9,7 +9,7 @@ const navItems = {
     { path: '/donate', label: 'Donate' },
   ],
   RESPONDER: [
-    { path: '/responder', label: 'Dashboard' },  // Live Map ab dashboard pe hi hai
+    { path: '/responder', label: 'Dashboard' },
     { path: '/responder/dispatch', label: 'Dispatch' },
   ],
   ADMIN: [
@@ -23,7 +23,7 @@ const navItems = {
   ],
 };
 
-export default function Sidebar() {
+export default function Sidebar({ onClose }) {
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
 
@@ -64,6 +64,7 @@ export default function Sidebar() {
             key={item.path}
             to={item.path}
             end
+            onClick={onClose}
             style={({ isActive }) => ({
               ...styles.navItem,
               ...(isActive ? styles.navItemActive : {}),

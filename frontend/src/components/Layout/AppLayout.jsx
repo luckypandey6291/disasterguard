@@ -101,17 +101,18 @@ const styles = {
     color: '#1a1a18',
     padding: '8px',
   },
-  overlay: {
-    position: 'fixed',
-    inset: 0,
-    background: 'rgba(0,0,0,0.4)',
-    zIndex: 200,
-    display: 'flex',
-  },
-  mobileSidebar: {
-    width: '260px',
-    background: '#ffffff',
-    height: '100vh',
-    overflowY: 'auto',
-  },
+overlay: {
+  position: 'fixed',
+  inset: 0,
+  background: 'rgba(0,0,0,0.4)',
+  zIndex: 1000,  // 200 se 1000 karo
+  display: 'flex',
+},
+mobileSidebar: {
+  width: '260px',
+  background: '#ffffff',
+  height: '100vh',
+  overflowY: 'auto',
+  zIndex: 1001,  // yeh add karo
+},
 };

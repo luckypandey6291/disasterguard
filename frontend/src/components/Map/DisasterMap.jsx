@@ -10,7 +10,8 @@ const SEVERITY_COLORS = {
 
 export default function DisasterMap({ incidents = [], sosAlerts = [], height = '320px' }) {
   return (
-    <div style={{ borderRadius: '12px', overflow: 'hidden', height }}>
+    <div style={{ borderRadius: '12px', overflow: 'hidden', height , position: 'relative',
+  zIndex: 1}}>
       <MapContainer
         center={[22.5726, 88.3639]}
         zoom={11}

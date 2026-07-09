@@ -20,3 +20,7 @@ src/main/resources/application-local.properties
 .DS_Store
 Thumbs.db
 .vercel
+
+ai-service/venv/
+ai-service/__pycache__/
+ai-service/*.pyc

@@ -238,7 +238,7 @@ export default function SOSPage() {
         {/* Emergency contacts */}
         <div style={styles.contactsCard}>
           <h3 style={styles.contactsTitle}>Emergency contacts</h3>
-          <div style={styles.contactsGrid}>
+          <div className="responsive-contacts-grid" style={styles.contactsGrid}>
             {[
               { label: 'Police', number: '100' },
               { label: 'Ambulance', number: '108' },

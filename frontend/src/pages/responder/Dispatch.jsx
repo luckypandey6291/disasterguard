@@ -59,7 +59,7 @@ export default function Dispatch() {
       </div>
 
       {/* Stats */}
-      <div style={styles.statsGrid}>
+      <div className="responsive-grid-4" style={styles.statsGrid}>
         {[
           { label: 'Total SOS', value: sosList.length, color: '#378ADD' },
           { label: 'Pending', value: sosList.filter(s => s.status === 'PENDING').length, color: '#E24B4A' },
@@ -116,7 +116,7 @@ export default function Dispatch() {
                 </span>
               </div>
 
-              <div style={styles.sosInfo}>
+              <div className="responsive-form-row" style={styles.sosInfo}>
                 <div style={styles.infoItem}>
                   <span style={styles.infoLabel}>Location</span>
                   <span style={styles.infoVal}>

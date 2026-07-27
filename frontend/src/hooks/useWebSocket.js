@@ -9,10 +9,10 @@ export default function useWebSocket(onSosReceived, onSosUpdated, onIncidentRece
     const wsUrl = apiUrl.replace('https://', 'wss://').replace('http://', 'ws://');
 
     const client = new Client({
-      brokerURL: `${wsUrl}/ws/websocket`,
-      reconnectDelay: 0, // Auto reconnect band karo
+      brokerURL: `${wsUrl}/ws`,
+      reconnectDelay: 5000,
       onConnect: () => {
-        console.log('WebSocket connected!');
+        console.log('WebSocket connected successfully!');
         client.subscribe('/topic/sos', (message) => {
           const sos = JSON.parse(message.body);
           if (onSosReceived) onSosReceived(sos);
@@ -27,8 +27,8 @@ export default function useWebSocket(onSosReceived, onSosUpdated, onIncidentRece
         });
       },
       onDisconnect: () => console.log('WebSocket disconnected'),
-      onStompError: () => {}, // Error silently ignore
-      onWebSocketError: () => {}, // Error silently ignore
+      onStompError: (frame) => console.log('STOMP error:', frame.headers['message']),
+      onWebSocketError: (event) => console.log('WebSocket connection pending backend initialization...'),
     });
 
     try {

@@ -24,3 +24,6 @@ Thumbs.db
 ai-service/venv/
 ai-service/__pycache__/
 ai-service/*.pyc
+
+# Logs
+*.log

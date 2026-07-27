@@ -80,7 +80,7 @@ export default function ResponderDashboard() {
       </div>
 
       {/* Stats */}
-      <div style={styles.statsGrid}>
+      <div className="responsive-grid-4" style={styles.statsGrid}>
         {[
           { label: 'Pending SOS', value: sosList.filter(s => s.status === 'PENDING').length, color: '#E24B4A' },
           { label: 'Assigned', value: sosList.filter(s => s.status === 'ASSIGNED').length, color: '#EF9F27' },
@@ -106,7 +106,7 @@ export default function ResponderDashboard() {
       </div>
 
       {/* Content row */}
-      <div style={styles.contentRow}>
+      <div className="responsive-split" style={styles.contentRow}>
         {/* SOS Queue */}
         <div style={styles.section}>
           <div style={styles.sectionHeader}>

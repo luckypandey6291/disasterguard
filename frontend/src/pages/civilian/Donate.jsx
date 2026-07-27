@@ -47,7 +47,7 @@ export default function Donate() {
         </div>
 
         {/* Top impact stats */}
-        <div style={styles.impactRow}>
+        <div className="responsive-grid-4" style={styles.impactRow}>
           {[
             { label: 'Total donated', value: '₹2.4L', color: '#639922' },
             { label: 'Total donors', value: '384', color: '#378ADD' },
@@ -61,7 +61,7 @@ export default function Donate() {
           ))}
         </div>
 
-        <div style={styles.grid}>
+        <div className="responsive-split" style={styles.grid}>
 
           {/* Left — Donation form */}
           <div style={styles.card}>
@@ -121,7 +121,7 @@ export default function Donate() {
             </div>
 
             {/* Donor info */}
-            <div style={styles.twoCol}>
+            <div className="responsive-form-row" style={styles.twoCol}>
               <div style={styles.fieldGroup}>
                 <label style={styles.label}>Your name</label>
                 <input

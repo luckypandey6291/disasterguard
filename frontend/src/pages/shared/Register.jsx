@@ -85,7 +85,7 @@ export default function Register() {
         {error && <div style={styles.error}>{error}</div>}
 
         <form onSubmit={handleSubmit} style={styles.form}>
-          <div style={styles.row}>
+          <div className="responsive-form-row" style={styles.row}>
             <div style={styles.fieldGroup}>
               <label style={styles.label}>Full name *</label>
               <input
@@ -134,7 +134,7 @@ export default function Register() {
             </select>
           </div>
 
-          <div style={styles.row}>
+          <div className="responsive-form-row" style={styles.row}>
             <div style={styles.fieldGroup}>
               <label style={styles.label}>Password *</label>
               <input

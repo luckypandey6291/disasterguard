@@ -86,7 +86,7 @@ export default function DisasterInfo() {
       )}
 
       {!loading && incidents.length > 0 && (
-        <div style={styles.grid}>
+        <div className="responsive-split" style={styles.grid}>
           {/* Left — incident list */}
           <div style={styles.list}>
             <div style={styles.sectionTitle}>Active incidents</div>
@@ -144,7 +144,7 @@ export default function DisasterInfo() {
                 {selected.description && (
                   <div style={styles.description}>{selected.description}</div>
                 )}
-                <div style={styles.statsRow}>
+                <div className="responsive-grid-4" style={styles.statsRow}>
                   <div style={styles.statItem}>
                     <div style={styles.statLabel}>Type</div>
                     <div style={styles.statVal}>{selected.type || 'General'}</div>
@@ -186,7 +186,7 @@ export default function DisasterInfo() {
               {/* Emergency contacts */}
               <div style={styles.contactsCard}>
                 <div style={styles.tipsTitle}>Emergency contacts</div>
-                <div style={styles.contactsGrid}>
+                <div className="responsive-contacts-grid" style={styles.contactsGrid}>
                   {[
                     { label: 'Police', number: '100' },
                     { label: 'Ambulance', number: '108' },

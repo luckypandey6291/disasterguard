@@ -31,7 +31,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Stats */}
-      <div style={styles.statsGrid}>
+      <div className="responsive-grid-3" style={styles.statsGrid}>
         {[
           { label: 'Total users', value: '1,240', color: '#378ADD' },
           { label: 'Active incidents', value: '7', color: '#E24B4A' },
@@ -47,7 +47,7 @@ export default function AdminDashboard() {
         ))}
       </div>
 
-      <div style={styles.contentRow}>
+      <div className="responsive-split" style={styles.contentRow}>
         {/* Resources */}
         <div style={styles.section}>
           <h2 style={styles.sectionTitle}>Resource inventory</h2>

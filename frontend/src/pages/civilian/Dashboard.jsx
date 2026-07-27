@@ -80,7 +80,7 @@ useEffect(() => {
         </div>
       </div>
 
-      <div style={styles.statsGrid}>
+      <div className="responsive-grid-4" style={styles.statsGrid}>
         {stats.map((stat) => (
           <div key={stat.label} style={styles.statCard}>
             <div style={styles.statLabel}>{stat.label}</div>
@@ -91,17 +91,17 @@ useEffect(() => {
       </div>
 
       {/* Live Map */}
-<div style={styles.mapSection}>
-  <div style={styles.sectionHeader}>
-    <h2 style={styles.sectionTitle}>Live disaster map</h2>
-    <span style={{ fontSize: '12px', color: '#888780' }}>
-      {incidents.length} incidents plotted
-    </span>
-  </div>
-  <DisasterMap incidents={incidents} height="320px" />
-</div>
+      <div style={styles.mapSection}>
+        <div style={styles.sectionHeader}>
+          <h2 style={styles.sectionTitle}>Live disaster map</h2>
+          <span style={{ fontSize: '12px', color: '#888780' }}>
+            {incidents.length} incidents plotted
+          </span>
+        </div>
+        <DisasterMap incidents={incidents} sosAlerts={sosAlerts} height="320px" />
+      </div>
 
-      <div style={styles.contentRow}>
+      <div className="responsive-split" style={styles.contentRow}>
         <div style={styles.section}>
           <div style={styles.sectionHeader}>
             <h2 style={styles.sectionTitle}>Active alerts</h2>
@@ -200,19 +200,22 @@ const styles = {
     borderRadius: '20px', border: '0.5px solid #C0DD97' },
   liveDot: { width: '7px', height: '7px', borderRadius: '50%',
     background: '#639922', display: 'inline-block' },
-  statsGrid: {display: 'grid',gridTemplateColumns: 'repeat(2, 1fr)',  // Mobile pe 2 columns
-  gap: '12px',
-  marginBottom: '24px',},
+  statsGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(4, 1fr)',
+    gap: '12px',
+    marginBottom: '24px',
+  },
   statCard: { background: '#ffffff', borderRadius: '12px',
     border: '0.5px solid #e0dfd7', padding: '16px' },
   statLabel: { fontSize: '12px', color: '#888780', marginBottom: '6px' },
   statValue: { fontSize: '26px', fontWeight: '500', marginBottom: '4px' },
   statSub: { fontSize: '11px', color: '#B4B2A9' },
   contentRow: {
-  display: 'grid',
-  gridTemplateColumns: '1fr',  // Mobile pe single column
-  gap: '20px',
-},
+    display: 'grid',
+    gridTemplateColumns: '1fr 280px',
+    gap: '20px',
+  },
   section: { background: '#ffffff', borderRadius: '12px',
     border: '0.5px solid #e0dfd7', padding: '20px' },
   sectionHeader: { display: 'flex', alignItems: 'center',

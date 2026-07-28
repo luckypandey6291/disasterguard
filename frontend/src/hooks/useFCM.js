@@ -30,8 +30,20 @@ export default function useFCM() {
         }
 
         if (permission === 'granted') {
+          let swRegistration = null;
+          if ('serviceWorker' in navigator) {
+            try {
+              swRegistration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
+            } catch (swErr) {
+              console.warn("Service Worker registration notice:", swErr.message);
+            }
+          }
+
           const rawVapidKey = import.meta.env.VITE_FIREBASE_VAPID_KEY;
-          const tokenOptions = (rawVapidKey && rawVapidKey.length > 20) ? { vapidKey: rawVapidKey } : {};
+          const tokenOptions = {
+            ...(rawVapidKey && rawVapidKey.length > 20 ? { vapidKey: rawVapidKey } : {}),
+            ...(swRegistration ? { serviceWorkerRegistration: swRegistration } : {}),
+          };
 
           const currentToken = await getToken(messaging, tokenOptions).catch((err) => {
             console.warn('FCM Token Notice (Optional in Dev):', err.message);

@@ -3,7 +3,7 @@ import { getAuth } from 'firebase/auth';
 import { getMessaging, isSupported } from 'firebase/messaging';
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyCB2J9EvFgGQViL8Ykbdc31tZ347llQBBA",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyCB2J9EvFgGQViL8Ykbdc31tZ347lLQBBA",
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "disasterguard-6dab8.firebaseapp.com",
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "disasterguard-6dab8",
   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "disasterguard-6dab8.firebasestorage.app",

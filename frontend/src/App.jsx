@@ -6,6 +6,7 @@ import Dispatch from './pages/responder/Dispatch';
 
 import Login from './pages/shared/Login';
 import Register from './pages/shared/Register';
+import About from './pages/shared/About';
 import NotFound from './pages/shared/NotFound';
 
 import CivilianDashboard from './pages/civilian/Dashboard';
@@ -13,6 +14,7 @@ import SOSPage from './pages/civilian/SOSPage';
 import ResponderDashboard from './pages/responder/Dashboard';
 import AdminDashboard from './pages/admin/Dashboard';
 import Donate from './pages/civilian/Donate';
+import AppLayout from './components/Layout/AppLayout';
 
 function ProtectedRoute({ children, allowedRoles }) {
   const { user, token } = useAuthStore();
@@ -49,7 +51,7 @@ export default function App() {
         <Route path="/disaster-info" element={
           <ProtectedRoute allowedRoles={['CIVILIAN', 'NGO']}>
              <DisasterInfo />
-         </ProtectedRoute>
+          </ProtectedRoute>
         } />
 
         <Route path="/responder/dispatch" element={
@@ -60,8 +62,16 @@ export default function App() {
 
         <Route path="/donate" element={
           <ProtectedRoute allowedRoles={['CIVILIAN', 'NGO']}>
-           <Donate />
-        </ProtectedRoute>
+            <Donate />
+          </ProtectedRoute>
+        } />
+
+        <Route path="/about" element={
+          <ProtectedRoute>
+            <AppLayout>
+              <About />
+            </AppLayout>
+          </ProtectedRoute>
         } />
         
         <Route path="/admin" element={

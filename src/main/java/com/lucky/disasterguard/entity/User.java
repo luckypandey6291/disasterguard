@@ -26,6 +26,9 @@ public class User {
 
     private String phone;
 
+    @Column(unique = true)
+    private String firebaseUid;
+
     @Enumerated(EnumType.STRING)
     private Role role;
 }

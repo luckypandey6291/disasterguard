@@ -1,9 +1,14 @@
 import { useState, useEffect } from 'react';
 import Sidebar from './Sidebar';
+import NotificationCenter from '../Notification/NotificationCenter';
+import useFCM from '../../hooks/useFCM';
 
 export default function AppLayout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 768);
+
+  // Initialize FCM push notification listener
+  useFCM();
 
   useEffect(() => {
     const handleResize = () => {
@@ -31,12 +36,15 @@ export default function AppLayout({ children }) {
             </svg>
             <span style={styles.mobileLogoText}>DisasterGuard</span>
           </div>
-          <button
-            style={styles.menuBtn}
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-          >
-            {sidebarOpen ? '✕' : '☰'}
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <NotificationCenter />
+            <button
+              style={styles.menuBtn}
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+            >
+              {sidebarOpen ? '✕' : '☰'}
+            </button>
+          </div>
         </div>
       )}
 
@@ -63,6 +71,11 @@ export default function AppLayout({ children }) {
         paddingRight: isMobile ? '16px' : '28px',
         paddingBottom: isMobile ? '16px' : '28px',
       }}>
+        {!isMobile && (
+          <div style={styles.desktopTopBar}>
+            <NotificationCenter />
+          </div>
+        )}
         {children}
       </main>
     </div>
@@ -78,6 +91,11 @@ const styles = {
   main: {
     flex: 1,
     overflowY: 'auto',
+  },
+  desktopTopBar: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    marginBottom: '16px',
   },
   mobileTopBar: {
     position: 'fixed',
@@ -111,18 +129,18 @@ const styles = {
     color: '#1a1a18',
     padding: '8px',
   },
-overlay: {
-  position: 'fixed',
-  inset: 0,
-  background: 'rgba(0,0,0,0.4)',
-  zIndex: 1000,  // 200 se 1000 karo
-  display: 'flex',
-},
-mobileSidebar: {
-  width: '260px',
-  background: '#ffffff',
-  height: '100vh',
-  overflowY: 'auto',
-  zIndex: 1001,  // yeh add karo
-},
+  overlay: {
+    position: 'fixed',
+    inset: 0,
+    background: 'rgba(0,0,0,0.4)',
+    zIndex: 1000,
+    display: 'flex',
+  },
+  mobileSidebar: {
+    width: '260px',
+    background: '#ffffff',
+    height: '100vh',
+    overflowY: 'auto',
+    zIndex: 1001,
+  },
 };

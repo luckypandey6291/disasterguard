@@ -1,13 +1,26 @@
 import axios from 'axios';
+import { auth } from '../config/firebase';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080',
   headers: { 'Content-Type': 'application/json' },
 });
 
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-  if (token) config.headers.Authorization = `Bearer ${token}`;
+api.interceptors.request.use(async (config) => {
+  try {
+    let token = null;
+    if (auth.currentUser) {
+      token = await auth.currentUser.getIdToken();
+    }
+    if (!token) {
+      token = localStorage.getItem('token');
+    }
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+  } catch (err) {
+    console.error("Error retrieving Firebase ID token:", err);
+  }
   return config;
 });
 

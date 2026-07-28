@@ -7,19 +7,21 @@ const navItems = {
     { path: '/sos', label: 'SOS Alert' },
     { path: '/disaster-info', label: 'Disaster Info' },
     { path: '/donate', label: 'Donate' },
+    { path: '/about', label: 'About' },
   ],
   RESPONDER: [
     { path: '/responder', label: 'Dashboard' },
     { path: '/responder/dispatch', label: 'Dispatch' },
+    { path: '/about', label: 'About' },
   ],
   ADMIN: [
     { path: '/admin', label: 'Dashboard' },
-    { path: '/admin/resources', label: 'Resources' },
-    { path: '/admin/users', label: 'Users' },
+    { path: '/about', label: 'About' },
   ],
   NGO: [
     { path: '/dashboard', label: 'Dashboard' },
     { path: '/donate', label: 'Donations' },
+    { path: '/about', label: 'About' },
   ],
 };
 

@@ -25,10 +25,25 @@ public class IncidentService {
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
+    @Autowired
+    private FcmNotificationService fcmNotificationService;
+
+    private User getAuthenticatedUser(String token) {
+        org.springframework.security.core.Authentication auth = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.getPrincipal() instanceof User) {
+            return (User) auth.getPrincipal();
+        }
+        if (token != null && !token.isBlank()) {
+            try {
+                String email = jwtUtil.extractEmail(token.replace("Bearer ", ""));
+                return userRepository.findByEmail(email).orElse(null);
+            } catch (Exception ignored) {}
+        }
+        throw new RuntimeException("Authenticated user not found");
+    }
+
     public Incident createIncident(IncidentRequest request, String token) {
-        String email = jwtUtil.extractEmail(token.replace("Bearer ", ""));
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        User user = getAuthenticatedUser(token);
 
         Incident incident = new Incident();
         incident.setTitle(request.getTitle());
@@ -43,8 +58,20 @@ public class IncidentService {
 
         Incident saved = incidentRepository.save(incident);
 
-        // WebSocket se broadcast karo
+        // 1. WebSocket broadcast
         messagingTemplate.convertAndSend("/topic/incidents", saved);
+
+        // 2. FCM Push Notification to all users
+        try {
+            fcmNotificationService.sendToAll(
+                    "⚠️ New Disaster Alert: " + saved.getTitle(),
+                    (saved.getLocationName() != null ? "Location: " + saved.getLocationName() + " — " : "") + saved.getSeverity() + " severity incident reported.",
+                    "INCIDENT_ALERT",
+                    java.util.Map.of("incidentId", saved.getId().toString())
+            );
+        } catch (Exception e) {
+            System.err.println("FCM Incident Notification error: " + e.getMessage());
+        }
 
         return saved;
     }
